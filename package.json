@@ -10,10 +10,21 @@
   },
   "dependencies": {
     "@next/font": "13.1.1",
+    "awesome-image-viewer": "^1.0.60",
+    "bootstrap": "^5.2.3",
+    "chart.js": "^4.2.0",
+    "cookies-next": "^2.1.1",
+    "emoji-picker-react": "^4.4.7",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
+    "moment": "^2.29.4",
     "next": "13.1.1",
+    "photoviewer": "^3.6.6",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "18.2.0",
+    "react-slick": "^0.29.0",
+    "react-toastify": "^9.1.1",
+    "slick-carousel": "^1.8.1"
   }
 }
