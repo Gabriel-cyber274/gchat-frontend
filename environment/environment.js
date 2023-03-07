@@ -28,11 +28,20 @@ export const environment = {
     },
     post: {
       main: 'posts',
+      privatePost: 'posts/private',
       myPosts: 'myPosts',
       media: 'media',
       like: 'like',
       unlike: 'unlike',
-      share: 'posts/share'
+      share: 'posts/share',
+      sharedPublic: 'posts/share/public',
+      sharedPrivate: 'posts/share/private'
+    },
+    comments: {
+      getComments: 'post-comments/',
+      main: 'comment',
+      subComment: 'subComment',
+      deleteComment: 'deleteComment/'
     }
   };
   

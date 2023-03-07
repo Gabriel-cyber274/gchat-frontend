@@ -8,17 +8,17 @@ import { useRouter } from 'next/navigation'
 
 const sansation = Sansita({ subsets: ['latin'], weight: '700' })
 
-function Content({post}) {
+function Content({post, sharedPrivate, sharedPublic, privatePost}) {
   const router = useRouter();
   useEffect(()=> {
     if(localStorage.currentUser === undefined || localStorage.currentUser === null ) {
       router.replace('/auth/login')
     }
-  })
+  }, [])
   return (
     <div className={`${sansation.className}`}>
         <Nav />
-        <Main_content posts={post} />
+        <Main_content posts={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} />
     </div>
   )
 }

@@ -7,13 +7,18 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
-import EmojiPicker from 'emoji-picker-react';
+// import EmojiPicker from 'emoji-picker-react';
+import axios, {isCancel, CancelToken} from 'axios'
+import Pusher from "pusher-js";
+import Echo from "laravel-echo";
+// import  'emoji-picker-element';
 
 
 
 const baseUrl = environment.scheme + environment.baseUrl;
-function Main_content({posts}) {
+function Main_content({posts,sharedPrivate, sharedPublic, privatePost}) {
     let token = getCookie('token');
+    const [mainPost, setMainPost] = useState([]);
     const router = useRouter();
     const [currentUser, setCurrentUser] = useState({});
     const postRef = useRef(null);
@@ -24,14 +29,45 @@ function Main_content({posts}) {
     const postRef3Close = useRef(null);
     const postRef4 = useRef(null);
     const postRef4Close = useRef(null);
+    const commentRef = useRef(null);
     const [textOnly, setTextOnly] = useState(false)
     const [files, setFiles] = useState([]);
     const [rot, setRot] = useState(0)
     const [zoom, setZoom] = useState(0);
     const [showLib, setShowLib] = useState(false);
-    // const [share, setShare] = useState(false);
+    const [postText, setPostText] = useState('');
+    const [comments, setComments] = useState([]);
+    const [commentText, setCommentText] = useState('');
+    const [postId, setPostId] = useState('');
+    const [subComment, setSubComment] = useState([]);
+    const [subReply, setSubReply] = useState(false);
+    const [subUser, setSubUser] = useState('');
+    const [commentId, setCommentId] = useState('');
 
+    // const cookies = new Cookies();
 
+    // const options = {
+    //     broadcaster: "pusher",
+    //     key: "7f0a98912565df7f4f9a",
+    //     cluster: "eu",
+    //     forceTLS: true,
+    //     encrypted: false,
+    //     //authEndpoint is your apiUrl + /broadcasting/auth
+    //     authEndpoint: 'http://localhost:8000/api/broadcasting/auth',
+    //     // As I'm using JWT tokens, I need to manually set up the headers.
+    //     auth: {
+    //         headers: {
+    //             // "X-CSRF-TOKEN": 'csrf_token',
+    //             Authorization: "Bearer " + token,
+    //             Accept: "application/json"
+    //         }
+    //     }
+    // };
+
+    // const echo = new Echo(options);
+
+    // useEffect(()=> { 
+    // }, [])
     
     const notify_err = (res) => toast.error(res, { theme: "colored" });
     const notify = (res)=> {
@@ -40,97 +76,15 @@ function Main_content({posts}) {
 
     useEffect(()=> {
         setCurrentUser(JSON.parse(localStorage.currentUser).user)
-    })
+    }, [])
 
     useEffect(()=> {
-    }, [files])
+        let post = [];
+        post.push(...posts.post, ...sharedPrivate.post, ...sharedPublic.post, ...privatePost.post);
+        setMainPost(post); 
+    }, [posts,sharedPrivate, sharedPublic, privatePost])
 
-    const likePost = async(id, likes) => {
-        if(likes.filter((like)=> like.user_id === currentUser.id).length === 0) {
-            let url = baseUrl + environment.post.like;
-            const data = {
-                post_id: id,
-            }
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                const res = await response.json();
-                // router.refresh();
-                window.location.reload();
-                if(res.success) {
-                    notify(res.message)
-                }else {
-                    notify_err(res.message)
-                }
-            } catch (error) {
-                notify_err('error')
-                return error
-            }
-        }
-        else {
-            try {
-                const response = await fetch(baseUrl + environment.post.unlike + `/${likes.filter((like)=> like.user_id === currentUser.id)[0].id}`, {
-                    method: 'DELETE',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                const res = await response.json();
-                // router.refresh();
-                window.location.reload();
-                if(res.success) {
-                    notify(res.message)
-                }else {
-                    notify_err(res.message)
-                }
-            } catch (error) {
-                notify_err('error')
-                return error
-            }
-        }
-    }
-    
-    const sharePost = async(id, shares)=> {
-        if(shares.filter((share)=> share.user_id === currentUser.id).length === 0) {
-            let url = baseUrl + environment.post.share;
-            const data = {
-                post_id: id,
-            }
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                const res = await response.json();
-                // router.refresh();
-                window.location.reload();
-                if(res.success) {
-                    notify(res.message)
-                }else {
-                    notify_err(res.message)
-                }
-            } catch (error) {
-                notify_err('error')
-                return error
-            }
-        }else {
-            notify_err('you already shared this post')
-        }
-    }
+
 
      
     function calendarDate(date) {
@@ -234,7 +188,420 @@ function Main_content({posts}) {
     }
     
 
+    const emojiClicked = (e)=> {
+        // document.querySelector('emoji-picker')
+        // .addEventListener('emoji-click', event => {
+        //     // console.log(event.detail.unicode, 'ebuka');  
+        //     let jj = postText;
+        //     jj.split('');
+        //     jj.push(event.detail.unicode)
+        //     jj.join('')
+        //     console.log(jj, 'ebuka');
+        //     setPostText(postText + event.detail.unicode)
+        // });
+        // console.log('ebuka')
+        setPostText(postText + e.emoji)
+    }
 
+    
+    // posts
+    const textPost = async(e)=> {
+        e.preventDefault();
+
+        let url = baseUrl + environment.post.main;
+        const data = {
+            text: e.target[0].value,
+        }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const res = await response.json();
+            e.target.reset();
+            setTextOnly(false);
+            router.refresh();
+            if(res.success) {
+                notify(res.message)
+                echo.private('post')
+                .listen('.PostCreated', (e) => {
+                    // this.Post.push({
+                    //   text: e.post.text,
+                    //   user_id: e.post.user_id
+                    // });
+                    alert('hello world');
+                    console.log('john', 'ebuka')
+                });
+            }else {
+                notify_err(res.message)
+            }
+        } catch (error) {
+            notify_err('error')
+            return error
+        }    
+    }
+    
+    const postMedia = async()=> {
+        postRef4Close.current.click()
+        let url = baseUrl + environment.post.main;
+        const data = {
+            text: postText,
+        }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const res = await response.json();
+            if(res.success) {
+                mediaPost(res.post_id)
+            }else {
+                notify_err(res.message)
+            }
+        } catch (error) {
+            notify_err('error')
+            return error
+        }   
+    }
+
+    const mediaPost = async(id)=> {
+        let url = baseUrl + environment.post.media;
+        
+        console.log(files, 'ebuka')
+        const formData = new FormData();
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append(`file`, files[i]);
+        }   
+        formData.append('post_id', id)
+
+        try {
+            const response = await axios({
+                url: url,  
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                data: formData,
+            });
+            console.log(response.data.success, 'ebuka')
+            router.refresh();
+            if(response.data.success) {
+                notify(response.data.message)
+            }else {
+                notify_err(response.data.message)
+            }
+        } catch (error) {
+            notify_err('error')
+            console.log(error, 'ebuka')
+            return error
+        }   
+
+    }
+
+    
+    const likePost = async(id, likes) => {
+        if(likes.filter((like)=> like.user_id === currentUser.id).length === 0) {
+            let url = baseUrl + environment.post.like;
+            const data = {
+                post_id: id,
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                router.refresh();
+                if(res.success) {
+                    notify(res.message)
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }
+        else {
+            try {
+                const response = await fetch(baseUrl + environment.post.unlike + `/${likes.filter((like)=> like.user_id === currentUser.id)[0].id}`, {
+                    method: 'DELETE',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                router.refresh();
+                if(res.success) {
+                    notify(res.message)
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }
+    }
+    
+    const sharePost = async(id, shares)=> {
+        if(shares.filter((share)=> share.user_id === currentUser.id).length === 0) {
+            let url = baseUrl + environment.post.share;
+            const data = {
+                post_id: id,
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                router.refresh();
+                if(res.success) {
+                    notify(res.message)
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }else {
+            notify_err('you already shared this post')
+        }
+    }
+
+
+
+    // comments
+    const getComments = async(id)=> {
+        let url = baseUrl + environment.comments.getComments + `${id}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                // body: JSON.stringify(data),
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const res = await response.json();
+            console.log(res, 'ebuka');
+            if(res.success) {
+                setComments(res.comments);
+                commentRef.current.click();
+            }else {
+                notify_err(res.message)
+            }
+        } catch (error) {
+            notify_err('error')
+            return error
+        }
+    }
+
+    const sendComment = async(e) => {
+        e.preventDefault();
+        if(commentText.length === 0) {
+            notify_err('write some text')
+        }
+        else if(!subReply) {
+            let url = baseUrl + environment.comments.main;
+            const data = {
+                post_id: postId,
+                comment: commentText
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                router.refresh();
+                setCommentText('')
+                if(res.success) {
+                    notify(res.message)
+                    getComments2(postId)
+                    
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }
+        else if (subReply) {
+            let url = baseUrl + environment.comments.subComment;
+            const data = {
+                comment_id: subUser.slice(subUser.indexOf(',')+1, subUser.length),
+                comment: commentText
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                setCommentText('')
+                if(res.success) {
+                    notify(res.message)
+                    showSubComment2(res.subcomment.comment_id);
+                    getComments2(postId)
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }
+    }
+
+    
+    const getComments2 = async(id)=> {
+        let url = baseUrl + environment.comments.getComments + `${id}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                // body: JSON.stringify(data),
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const res = await response.json();
+            if(res.success) {
+                setComments(res.comments);
+            }else {
+                notify_err(res.message)
+            }
+        } catch (error) {
+            notify_err('error')
+            return error
+        }
+    }
+
+    const showSubComment = async(id)=> {
+        if(subComment.length > 0) {
+            setCommentId('');
+            setSubComment([])
+        }else {
+            let url = baseUrl + environment.comments.subComment + `/${id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const res = await response.json();
+                console.log(res)
+                if(res.success) {
+                    setSubComment(res.subcomment);
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }
+    }
+
+    const showSubComment2 = async(id)=> {
+        let url = baseUrl + environment.comments.subComment + `/${id}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const res = await response.json();
+            router.refresh();
+            if(res.success) {
+                setSubComment(res.subcomment);
+            }else {
+                notify_err(res.message);
+            }
+        } catch (error) {
+            notify_err('error')
+            return error
+        }
+
+    }
+    
+
+    const deleteComment = async(comment)=> {
+        if(comment.user_id === currentUser.id) {
+            let url = baseUrl + environment.comments.deleteComment + `${comment.id}`
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    }
+                });
+                const res = await response.json();
+                router.refresh();
+                if(res.success) {
+                    notify(res.message);
+                    setComments(comments.filter(com => com.id !== comment.id))
+                }else {
+                    notify_err(res.message)
+                }
+            } catch (error) {
+                notify_err('error')
+                return error
+            }
+        }else {
+            notify_err('you cannot delete this comment')
+        }
+    }
+
+
+
+    // modals
     const PostModal = (
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog firstModal modal-lg modal-dialog-centered">
@@ -275,7 +642,7 @@ function Main_content({posts}) {
                         <img src="/assets/photo.png" alt="" />
                         <h2 className='text-center mt-2'>Photo/Video</h2>
                     </div>
-                    <label htmlFor="media" className='text-center text-white px-3 py-2 mt-5'>
+                    <label htmlFor="media" style={{cursor: 'pointer'}} className='text-center text-white px-3 py-2 mt-5'>
                         Select from computer
                         <input type="file" onChange={selectedMedia} multiple id='media' className='d-none' />
                     </label>
@@ -309,7 +676,7 @@ function Main_content({posts}) {
                             {files.length > 0 && files.map((file, idx)=> (
                                 <div class={`carousel-item ${idx== 0 && 'active'}`}>
                                     {file.type.includes('image') && <img src={URL.createObjectURL(files[idx])} height='600' class="d-block w-100" alt="..."/>}
-                                    {file.type.includes('video') && <video src={URL.createObjectURL(files[idx])} width='100%' autoPlay height='600' class="d-block w-100" alt="..." controls></video>}
+                                    {file.type.includes('video') && <video src={URL.createObjectURL(files[idx])} width='100%' height='600' class="d-block w-100" alt="..." controls></video>}
                                 </div>
                             ))}
                         </div>
@@ -361,7 +728,8 @@ function Main_content({posts}) {
         </div>
     )
 
-    
+
+    // https://bitbucket.org/ikoobadev/ims-web-api/
     const PostModal4 = (
         <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog thirdModal modal-lg modal-dialog-centered">
@@ -371,7 +739,7 @@ function Main_content({posts}) {
                     <div style={{cursor: 'pointer', width: '30px', height:'30px'}}  onClick={()=> {postRef4Close.current.click(); postRef3.current.click();}}>
                         <img src="/assets/left.png"  alt="" />
                     </div>
-                    <button>Share</button>
+                    <button onClick={postMedia}>Share</button>
                 </div>
                 <h1 className='text-center crop'>Crop</h1>
                 <div className='d-flex' style={{borderTop: '0.8318px solid rgba(58, 58, 58, 0.22)', marginTop: '2px'}}>
@@ -406,7 +774,7 @@ function Main_content({posts}) {
                             </button>
                         </div>
                     </div>
-                    <div className='post4_post py-3 px-3'>
+                    <div className='post4_post py-3 px-3' style={{width: '45%'}}>
                         <div className='d-flex post4 align-items-center'>
                             <img src="/assets/img1.jpg" width='40px' height='40px' style={{borderRadius: '50%'}} alt="" />
                             <div className='ms-3'>
@@ -417,10 +785,11 @@ function Main_content({posts}) {
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <textarea name="" id="" cols="30" rows="10" placeholder='Write A Caption'></textarea>
-                            <div>
-                                <EmojiPicker />
+                        <div className='text mt-4'>
+                            <textarea name="" id="" value={postText} onChange={(e)=> setPostText(e.target.value)} cols="30" rows="10" placeholder='Write A Caption'></textarea>
+                            <div className='emoji' onClick={emojiClicked}>
+                                {/* <EmojiPicker width={'100%'} height={'360px'} onEmojiClick={emojiClicked} /> */}
+                                {/* <emoji-picker class="dark" style={{height: '360px'}}  ></emoji-picker> */}
                             </div>
                         </div>
                     </div>
@@ -430,37 +799,77 @@ function Main_content({posts}) {
         </div>
     )
 
+    const CommentModal = (
+        <div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog thirdModal modal-lg modal-dialog-centered">
+                <div class="modal-content comment1">
+                <div class="modal-header justify-content-between closeP2">
+                    <button type="button" ref={postRef4Close} class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 className='pt-3'>Comments</h1>
+                </div>
+                <div className='px-3'>  
+                    <div className='main-comment-overflow mb-2'>
+                        {comments.length=== 0 && <h1>No Comments</h1>}
+                        {comments.length > 0 && comments.map((comment,idx)=> (
+                            <div className='d-flex justify-content-between' key={idx}>
+                                <div style={{width: '70%'}}>
+                                    <div className='d-flex main-comment' >
+                                        <img src="/assets/img1.jpg" className='mt-2' width={'50px'} height={'50px'} style={{borderRadius: '50%'}} alt="" />
+                                        <div className='ms-3'>
+                                            <h2 className='mb-3'>{comment.user.name} <span className='ms-3'>{comment.created_at.slice(comment.created_at.indexOf('T')+1, comment.created_at.lastIndexOf(':'))}{comment.created_at.slice(comment.created_at.indexOf('T')+1, comment.created_at.indexOf(':')) > 11 ? 'pm' : 'am'}</span></h2>
+                                            <p>{comment.comment}
+                                                <b className='ms-3' style={{cursor: 'pointer',}} onClick={()=> {showSubComment(comment.id); setCommentId(comment.id)}}>{subComment.length > 0 && commentId === comment.id ? 'Close replies' : `Show ${comment.subcomments.length} replies`}</b>
+                                            </p>
+                                        </div>  
+                                    </div>
+                                    {commentId === comment.id && subComment.length > 0 && subComment.map((com, idx)=> (
+                                        <div className='sub' key={idx}>
+                                            <div className='d-flex main-comment ms-3' >
+                                                <img src="/assets/img1.jpg" className='mt-2' width={'50px'} height={'50px'} style={{borderRadius: '50%'}} alt="" />
+                                                <div className='ms-3'>
+                                                    <h2 className='mb-3'>{com.user.name}</h2>
+                                                    <p>{com.comment}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='reply-icon d-flex' style={{cursor: 'pointer'}}>
+                                    <img onClick={()=> {setSubReply(!subReply); setCommentText(''); setSubUser(`${comment.user.name},${comment.id}`)}} src="/assets/reply.png"  alt="" />
+                                    {/* <img className='ms-4 pe-3' src="/assets/more.png" alt="" /> */}
+                                    <div class="dropdown">
+                                        {/* <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Dropdown link
+                                        </a> */}
+                                        <img className='ms-4 pe-3 dropdown-toggle' style={{width: '24px'}} data-bs-toggle="dropdown" aria-expanded="false" src="/assets/more.png" alt="" />
 
-    const textPost = async(e)=> {
-        e.preventDefault();
+                                        <ul class="dropdown-menu">
+                                            <li className="dropdown-item commentDelete" onClick={()=> deleteComment(comment)}>Delete Comment</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className='comment-textMain px-3'>
+                    <div className='d-flex align-items-center py-4'  style={{borderTop: '1px solid rgba(58, 58, 58, 0.4)'}}>
+                        <img src="/assets/img1.jpg" className='me-3' width={'50px'} height={'50px'} style={{borderRadius: '50%'}} alt="" />
+                        <div className='position-relative comment-input'>
+                            <form action="" onSubmit={sendComment}>
+                                <input className='rounded-pill' placeholder={subReply ? `Reply ${subUser.slice(0, subUser.indexOf(','))}` : 'Comment'} value={commentText} type="text" onChange={(e)=> setCommentText(e.target.value)} />
+                                <img src="/assets/EMOJI.png" style={{cursor: 'pointer'}}  className='position-absolute emoji' alt="" />
+                                <img src="/assets/reply2.png" onClick={sendComment} style={{cursor: 'pointer'}} className='position-absolute send' alt="" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    )
 
-        let url = baseUrl + environment.post.main;
-        const data = {
-            text: e.target[0].value,
-        }
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            const res = await response.json();
-            // router.refresh();
-            window.location.reload();
-            if(res.success) {
-                notify(res.message)
-            }else {
-                notify_err(res.message)
-            }
-        } catch (error) {
-            notify_err('error')
-            return error
-        }    
-    }
+
 
 
   return (
@@ -552,10 +961,10 @@ function Main_content({posts}) {
                             </div>
                         </div>
                     </div>
-                    {posts.post.length=== 0 ?
+                    {mainPost.length=== 0 ?
                     <h6>No post</h6>
                     :
-                    posts.post.map((post, idx)=> (
+                    mainPost.map((post, idx)=> (
                         <div className='main_post mb-5 py-5 d-flex justify-content-center' key={idx}>
                             <div style={{width: '90%'}}>
                                 <div className='d-flex justify-content-between align-items-center'>
@@ -593,7 +1002,7 @@ function Main_content({posts}) {
                                         ))}
                                     </div>
                                     <div className='d-flex post_actions mt-3 justify-content-between' style={{width: '85%', cursor: 'pointer'}}>
-                                        <div className='d-flex align-items-center'>
+                                        <div className='d-flex align-items-center' onClick={()=> {getComments(post.id); setSubReply(false); setCommentId(''); setSubComment([]); setPostId(post.id); router.refresh();}}>
                                             <img src="/assets/comment.png" className='pt-3' alt="" />
                                             <h5 className='ms-3'>{post.comments.length}</h5>
                                         </div>
@@ -691,10 +1100,16 @@ function Main_content({posts}) {
         <button type="button" ref={postRef4} style={{display: 'none'}} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal4">
             Launch demo modal
         </button>
+        
+        <button type="button" ref={commentRef} style={{display: 'none'}} data-bs-toggle="modal" data-bs-target="#exampleModal5">
+            Launch demo modal
+        </button>
+        
         {PostModal}
         {PostModal2}
         {PostModal3}
         {PostModal4}
+        {CommentModal}
         <ToastContainer theme="colored"  />
     </div>
   )
