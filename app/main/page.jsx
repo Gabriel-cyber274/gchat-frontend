@@ -13,7 +13,7 @@ async function getPosts(token) {
         'Content-Type' : 'applications/json',
         'Authorization': `Bearer ${token}`
     },
-    }, {next: {revalidate: 60}});
+    }, {next: {revalidate: 10}});
   if (!res.ok) {
     // throw new Error('Failed to fetch data');
     console.log('error');
@@ -29,7 +29,7 @@ async function getPrivatePosts(token) {
         'Content-Type' : 'applications/json',
         'Authorization': `Bearer ${token}`
     },
-    }, {next: {revalidate: 60}});
+    }, {next: {revalidate: 10}});
   if (!res.ok) {
     // throw new Error('Failed to fetch data');
     console.log('error');
@@ -45,7 +45,7 @@ async function getSharedPublic(token) {
         'Content-Type' : 'applications/json',
         'Authorization': `Bearer ${token}`
     },
-    }, {next: {revalidate: 60}});
+    }, {next: {revalidate: 10}});
   if (!res.ok) {
     // throw new Error('Failed to fetch data');
     console.log('error');
@@ -62,7 +62,24 @@ async function getSharedPrivate(token) {
         'Content-Type' : 'applications/json',
         'Authorization': `Bearer ${token}`
     },
-    }, {next: {revalidate: 60}});
+    }, {next: {revalidate: 10}});
+  if (!res.ok) {
+    // throw new Error('Failed to fetch data');
+    console.log('error');
+  }
+
+  return res.json();
+}
+
+
+async function getMyPost(token) {
+  const res = await fetch(baseUrl + environment.post.myPosts, {
+    method: 'GET',
+    headers: {
+        'Content-Type' : 'applications/json',
+        'Authorization': `Bearer ${token}`
+    },
+    }, {next: {revalidate: 10}});
   if (!res.ok) {
     // throw new Error('Failed to fetch data');
     console.log('error');
@@ -78,14 +95,15 @@ async function page() {
   const sharedPublicData= getSharedPublic(nextCookies.get('token').value);
   const sharedPrivateData = getSharedPrivate(nextCookies.get('token').value);
   const postData = getPosts(nextCookies.get('token').value);
+  const myPostData = getMyPost(nextCookies.get('token').value);
 
   
-  const [post, sharedPrivate, sharedPublic, privatePost] = await Promise.all([postData, sharedPrivateData, sharedPublicData, privatePostData]); 
+  const [post, sharedPrivate, sharedPublic, privatePost, myPost] = await Promise.all([postData, sharedPrivateData, sharedPublicData, privatePostData, myPostData]); 
 
-  
+  console.log(privatePost)
   return (
     <div>
-        <Content post={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} />
+        <Content posts={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} myPost={myPost} />
     </div>
   )
 }

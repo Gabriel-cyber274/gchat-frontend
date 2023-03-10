@@ -1,11 +1,14 @@
 "use client"
 import React from 'react'
+import { useRouter } from 'next/navigation';
 
 function Nav() {
+    const router = useRouter();
+
   return (
     <div className='d-flex justify-content-center position-fixed main_landnav' style={{background: 'white', width: '100%'}}>
         <div className='nav_padding d-flex justify-content-evenly align-items-center'>
-            <div>
+            <div onClick={()=> router.push('/main')} style={{cursor: 'pointer'}}> 
                 <img src="/assets/G-Chat.png" alt="" />
             </div>
             <div className='nav_search position-relative'>

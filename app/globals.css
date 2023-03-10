@@ -489,7 +489,7 @@ a {
 
   color: #3A3A3A;
 }
-.create_post form input {
+.create_post form textarea {
   width: 100%;
   border-top: none;
   border-left: none;
@@ -500,6 +500,10 @@ a {
   font-size: 24px;
   line-height: 27px;
   color: rgba(58, 58, 58, 0.57);
+  height: 74px !important;
+  min-height: 74px !important;
+  max-height: 74px !important;
+  margin-top: 20px;
   /* box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.25); */
 }
 .main_post {
@@ -858,4 +862,54 @@ a {
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
+}
+.post_text_first {
+  width: 73.49px;
+  height: 49.92px;
+  left: 815px;
+  top: 0px;
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  box-shadow: 0px 0px 3.43567px rgba(0, 0, 0, 0.25);
+  /* border-radius: 0px 16.64px 0px 0px; */
+  border-radius: 16.64px;
+  color: white;
+  border: none;
+  /* position: absolute; */
+  top: -23px;
+  right: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+.create_new .active {
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+}
+.fourthModal .modal-header{
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+.fourthModal h2 {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #3A3A3A;
+}
+.fourthModal button {
+  border: none;
+}
+.fourthModal .yes {
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  color: #FFFFFF;
+}
+.fourthModal .no {
+  font-size: 16px;
+  line-height: 18px;
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

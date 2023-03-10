@@ -34,6 +34,7 @@ export const environment = {
       like: 'like',
       unlike: 'unlike',
       share: 'posts/share',
+      save: 'posts/save',
       sharedPublic: 'posts/share/public',
       sharedPrivate: 'posts/share/private'
     },
