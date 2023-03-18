@@ -22,7 +22,7 @@ import Modals from '../../components/main_component/Modals'
 const sansation = Sansita({ subsets: ['latin'], weight: '700' })
 
 const baseUrl = environment.scheme + environment.baseUrl;
-function Content({posts, sharedPrivate, sharedPublic, privatePost, myPost}) {
+function Content({posts, sharedPrivate, sharedPublic, privatePost, myPost, stories}) {
   let token = getCookie('token');
   const [mainPost, setMainPost] = useState([]);
   const router = useRouter();
@@ -112,7 +112,7 @@ function Content({posts, sharedPrivate, sharedPublic, privatePost, myPost}) {
 
   useEffect(()=> {
       let post = [];
-      post.push(...posts.post, ...privatePost.post, privatePost.myPrivate);
+      post.push(...posts.post, ...privatePost.post);
 
       let post2 = [];
       post2.push(...sharedPrivate.post, ...sharedPublic.post);
@@ -120,11 +120,13 @@ function Content({posts, sharedPrivate, sharedPublic, privatePost, myPost}) {
       let rand1 = Math.floor(Math.random()* post.length-1) + 1
 
       let main = [];
-      main.push(...post.sort((a,b)=> b.id - a.id).slice(0, rand1), ...post2, ...post.sort((a,b)=> b.id - a.id).slice(rand1))
+      main.push(...post.sort((a,b)=> b?.id - a?.id).slice(0, rand1), ...post2, ...post.sort((a,b)=> b?.id - a?.id).slice(rand1))
 
 
       // ...myPost.post
-      setMainPost(main); 
+      setMainPost(main);
+      
+      console.log(main, 'ebube')
   }, [posts,sharedPrivate, sharedPublic, privatePost, myPost])
 
 
@@ -312,7 +314,7 @@ const getComments = async(id)=> {
                           </div>
                       </div>
                   </div> */}
-                  <Stories />
+                  <Stories stories={stories.stories} />
               </div>
           </div>
           <div className='create_post my-5 py-4 d-flex justify-content-center'>
@@ -369,8 +371,8 @@ const getComments = async(id)=> {
                           <div className='d-flex align-items-center'>
                               <img src="/assets/img1.JPG" className='post_img' width='50' height='50' style={{borderRadius: '50%'}} alt="" />
                               <div className='ms-3 pt-2'>
-                                  <h1>{post.user.name}</h1>
-                                  <h3>{calendarDate(post.updated_at.slice(0,post.updated_at.indexOf('T')))}</h3>
+                                  <h1>{post?.user.name}</h1>
+                                  <h3>{calendarDate(post?.updated_at.slice(0,post?.updated_at.indexOf('T')))}</h3>
                               </div>
                           </div>
                           <div>
@@ -378,9 +380,9 @@ const getComments = async(id)=> {
                           </div>
                       </div>
                       <div>
-                          <p className='my-3'>{post.text}</p>
+                          <p className='my-3'>{post?.text}</p>
                           <div className="post_imgs mt-2">
-                              {post.images.length === 1 && post.images.map((img, id)=> (
+                              {post?.images.length === 1 && post?.images.map((img, id)=> (
                                   <>
                                       {img.file.includes('mp4')?
                                           <video src={img.file} className='full' controls />
@@ -389,7 +391,7 @@ const getComments = async(id)=> {
                                       }
                                   </>
                               ))}
-                              {post.images.length > 1 && post.images.map((img, id)=> (
+                              {post?.images.length > 1 && post?.images.map((img, id)=> (
                                   <>
                                       {img.file.includes('mp4')?
                                           <video src={img.file} controls />
@@ -400,17 +402,17 @@ const getComments = async(id)=> {
                               ))}
                           </div>
                           <div className='d-flex post_actions mt-3 justify-content-between' style={{width: '85%', cursor: 'pointer'}}>
-                              <div className='d-flex align-items-center' onClick={()=> {getComments(post.id); setSubReply(false); setCommentId(''); setSubComment([]); setPostId(post.id); router.refresh();}}>
+                              <div className='d-flex align-items-center' onClick={()=> {getComments(post?.id); setSubReply(false); setCommentId(''); setSubComment([]); setPostId(post?.id); router.refresh();}}>
                                   <img src="/assets/comment.png" className='pt-3' alt="" />
-                                  <h5 className='ms-3'>{post.comments.length}</h5>
+                                  <h5 className='ms-3'>{post?.comments.length}</h5>
                               </div>
-                              <div className='d-flex align-items-center' style={{cursor: 'pointer'}} onClick={(e)=> likePost(post.id, post.likes)}>
+                              <div className='d-flex align-items-center' style={{cursor: 'pointer'}} onClick={(e)=> likePost(post?.id, post?.likes)}>
                                   <img src="/assets/like.png" alt="" />
-                                  <h5 className='ms-3'>{post.likes.length}</h5>
+                                  <h5 className='ms-3'>{post?.likes.length}</h5>
                               </div>
-                              <div className='d-flex align-items-center' style={{cursor: 'pointer'}} onClick={(e)=> sharePost(post.id, post.share)}>
+                              <div className='d-flex align-items-center' style={{cursor: 'pointer'}} onClick={(e)=> sharePost(post?.id, post?.share)}>
                                   <img src="/assets/share.png" alt="" />
-                                  <h5 className='ms-3'>{post.share.length}</h5>
+                                  <h5 className='ms-3'>{post?.share.length}</h5>
                               </div>
                           </div>
                       </div>

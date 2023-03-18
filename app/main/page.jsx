@@ -88,6 +88,22 @@ async function getMyPost(token) {
   return res.json();
 }
 
+async function getStories(token) {
+  const res = await fetch(baseUrl + environment.stories.main, {
+    method: 'GET',
+    headers: {
+        'Content-Type' : 'applications/json',
+        'Authorization': `Bearer ${token}`
+    },
+    }, {next: {revalidate: 10}});
+  if (!res.ok) {
+    // throw new Error('Failed to fetch data');
+    console.log('error');
+  }
+
+  return res.json();
+}
+
 
 async function page() {
   const nextCookies = cookies();
@@ -96,14 +112,15 @@ async function page() {
   const sharedPrivateData = getSharedPrivate(nextCookies.get('token').value);
   const postData = getPosts(nextCookies.get('token').value);
   const myPostData = getMyPost(nextCookies.get('token').value);
+  const myStoriesData = getStories(nextCookies.get('token').value);
 
   
-  const [post, sharedPrivate, sharedPublic, privatePost, myPost] = await Promise.all([postData, sharedPrivateData, sharedPublicData, privatePostData, myPostData]); 
+  const [post, sharedPrivate, sharedPublic, privatePost, myPost, stories] = await Promise.all([postData, sharedPrivateData, sharedPublicData, privatePostData, myPostData, myStoriesData]); 
 
   console.log(privatePost)
   return (
     <div>
-        <Content posts={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} myPost={myPost} />
+        <Content posts={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} myPost={myPost} stories={stories} />
     </div>
   )
 }

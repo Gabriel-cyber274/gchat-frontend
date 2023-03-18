@@ -43,6 +43,9 @@ export const environment = {
       main: 'comment',
       subComment: 'subComment',
       deleteComment: 'deleteComment/'
+    },
+    stories: {
+      main: 'stories',
     }
   };
   
