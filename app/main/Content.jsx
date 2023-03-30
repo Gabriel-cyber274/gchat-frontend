@@ -314,7 +314,7 @@ const getComments = async(id)=> {
                           </div>
                       </div>
                   </div> */}
-                  <Stories stories={stories.stories} />
+                  <Stories stories={stories.stories} currentUser={currentUser} />
               </div>
           </div>
           <div className='create_post my-5 py-4 d-flex justify-content-center'>

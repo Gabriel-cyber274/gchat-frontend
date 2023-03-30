@@ -444,7 +444,7 @@ const deleteComment = async(comment)=> {
                     </div>
                     <label htmlFor="media" style={{cursor: 'pointer'}} className='text-center text-white px-3 py-2 mt-5'>
                         Select from computer
-                        <input type="file" onChange={selectedMedia} multiple id='media' className='d-none' />
+                        <input type="file" name='file[]' onChange={selectedMedia} multiple id='media' className='d-none' />
                     </label>
                 </div>
                 </div>

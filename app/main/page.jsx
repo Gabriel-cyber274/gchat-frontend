@@ -117,7 +117,8 @@ async function page() {
   
   const [post, sharedPrivate, sharedPublic, privatePost, myPost, stories] = await Promise.all([postData, sharedPrivateData, sharedPublicData, privatePostData, myPostData, myStoriesData]); 
 
-  console.log(privatePost)
+  // console.log(privatePost)
+  console.log(stories)
   return (
     <div>
         <Content posts={post} sharedPrivate={sharedPrivate} sharedPublic={sharedPublic} privatePost={privatePost} myPost={myPost} stories={stories} />

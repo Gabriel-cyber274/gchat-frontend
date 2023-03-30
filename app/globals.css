@@ -913,3 +913,251 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+.story_slideC {
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+}
+.logo_stories h2 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 40px;
+  color: rgba(255, 255, 255, 0.56);
+}
+.story_viewer .active {
+  overflow: hidden;
+  width: 418px;
+  height: 677px;
+  /* top: 93px; */
+  /* background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #FFFFFF; */
+  box-shadow: 0px 12px 48px rgba(0, 0, 0, 0.42);
+  border-radius: 25px;
+  transition: 1s;
+}
+.inactive3 {
+  transform: scale(0.8);
+  transition: 1s;
+}
+.inactive4 {
+  transition: 1s;
+  transform: scale(0.5);
+}
+.story_viewer .overlay {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  border-radius: 25px;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.459);
+}
+.stories_boxes {
+  width: 95%;
+  position: relative;
+  z-index: 1;
+}
+.stories_boxes .box {
+  width: 95%;
+  height: 2.2px;
+  margin-right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+.stories_boxes .fill {
+  position: absolute;
+  /* width: 40%; */
+  background-color: white;
+  height: 100%; 
+  transition: 0.5s;
+  left: 0;
+}
+
+.start_fill {
+  animation: flow 3s ease-in infinite forwards;
+}
+@keyframes flow {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+.user_profstory {
+  position: relative;
+  z-index: 1;
+  width: 95%;
+}
+.user_profstory h2 {
+  font-weight: 400;
+  font-size: 19.7348px;
+  line-height: 22px;
+  color: #FFFFFF;
+}
+.main_display img {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  border-radius: 25px;
+}
+.main_display p {
+  position: relative;
+  z-index: 1;
+  font-size: 28px;
+  line-height: 45px;
+  text-align: center;
+  color: #FFFFFF;
+  margin-top: 25px;
+  padding: 0 10px;
+}
+.story_reply {
+  position: absolute;
+  width: 100%;
+  bottom: 10px;
+  z-index: 1;
+}
+.story_reply input {
+  position: relative;
+  width: 100%;
+  border: 2px solid white;
+  padding: 10px 35px;
+  outline: none;
+  background-color: transparent;
+  color: white;
+}
+.story_reply .emoji2 {
+  position: absolute;
+  left: 23px;
+  top: 15px;
+}
+.story_reply .send2 {
+  position: absolute;
+  right: 76px;
+  top: 13px;
+}
+.next_inside .right {
+  position: absolute;
+  width: 30%;
+  right: 0;
+  height: 100%;
+  background-color: transparent;
+  top: 0;
+}
+.next_inside .left {
+  position: absolute;
+  width: 30%;
+  left: 0;
+  height: 100%;
+  background-color: transparent;
+  top: 0;
+}
+.inactive h2{
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 31px;
+
+  color: #FFFFFF;
+}
+.inactive {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  justify-content: center;
+  height: 100%;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  z-index: 1;
+  animation: inactive 0.2s ease-in 1 forwards;
+}
+@keyframes inactive {
+  0%{
+    transform: translate(-30%, -20%);
+    display: none;
+  }
+  100% {
+    transform: translate(0%, 0%);
+    display: flex;
+  }
+}
+.inactive h6 {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.story_viewer .start_inactive1 {
+  background-color: rgba(0, 0, 0, 0.822) !important;
+  transition: 0.5s;
+}
+
+.start_inactive2 {
+  animation: inactive2 0.2s ease-in 1 forwards;
+}
+@keyframes inactive2 {
+  0% {
+    transform: translate(0%, 0%);
+    display: flex;
+  }
+  100%{
+    transform: translate(-30%, -20%);
+    display: none !important;
+    visibility: hidden;
+  }
+}
+.slick-slide img {
+  display: inline !important;
+}
+.arrow_stories {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  width: 100%;
+  height: 100%;
+}
+.arrow_stories{
+  transform: scale(0.8);
+}
+.prev_sto {
+  top: 0;
+  display: flex;
+  align-items: center;
+  left: 0;
+  width: 50%;
+  justify-content: start;
+  padding-left: 34%;
+  z-index: 300 !important;
+}
+.next_sto {
+  top: 0;
+  display: flex;
+  align-items: center;
+  right: 0;
+  width: 100%;
+  justify-content: end;
+  padding-right: 27%;
+}
+.arrow_stories img{
+  z-index: 250;
+}
+.story_first_textS {
+  /* font-size: 5px; */
+}
+.story_views {
+  z-index: 1;
+  position: absolute;
+  bottom: 23px;
+  text-align: center;
+  width: 100%;
+  font-size: 10px;
+}

@@ -46,6 +46,10 @@ export const environment = {
     },
     stories: {
       main: 'stories',
+      singleMedia: 'stories/media/single/',
+      singletext: 'stories/text/single/',
+      storyMedia: "stories/media/",
+      storyText: "stories/text/"
     }
   };
   
