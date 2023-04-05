@@ -1,5 +1,5 @@
 "use client"
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useState, useRef } from "react";
 import Slider from "react-slick";
 import CenterMode from "./center";
 
@@ -7,6 +7,7 @@ export default function Stories({stories, currentUser}) {
     const [idx, setIdx] = useState(0);
     const [storySlide, showStorySlide] = useState(false);
     const [storyId, setStoryId] = useState(0);
+    const closeRef = useRef(null);
 
 
     useEffect(()=> {
@@ -150,12 +151,12 @@ export default function Stories({stories, currentUser}) {
                         <img src="/assets/G-Chat2.png" width={'158px'} alt="" />
                         <h2 className="mt-2">Stories</h2>
                     </div>
-                    <div onClick={()=> showStorySlide(false)}>
+                    <div ref={closeRef} onClick={()=> showStorySlide(false)}>
                         <img src="/assets/x.png" width={'40px'} alt="" />
                     </div>
                 </div>
                 <div style={{padding: '40px 0'}}>
-                    <CenterMode stories={stories} storyId={storyId} currentUser={currentUser} />
+                    <CenterMode stories={stories} closeRef={closeRef} storyId={storyId} currentUser={currentUser} />
                 </div>
             </div>
         }

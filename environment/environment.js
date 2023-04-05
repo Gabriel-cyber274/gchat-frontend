@@ -50,6 +50,14 @@ export const environment = {
       singletext: 'stories/text/single/',
       storyMedia: "stories/media/",
       storyText: "stories/text/"
+    },
+    friends: {
+      main: 'friends',
+      confirmFriend: 'friends/confirm',
+      removeFriend: 'removeFriend/'
+    },
+    user: {
+      main: 'users'
     }
   };
   

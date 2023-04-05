@@ -6,7 +6,7 @@ import { getCookie } from 'cookies-next';
 
 
 const baseUrl = environment.scheme + environment.baseUrl
-export default function CenterMode ({stories, storyId, currentUser}) {
+export default function CenterMode ({stories, storyId, currentUser, closeRef}) {
     const [idx, setIdx] = useState(0);
     const [activeStory, setActiveStory] = useState([]);
     const [scaleMedia, setScaleMedia] = useState(false);
@@ -22,16 +22,16 @@ export default function CenterMode ({stories, storyId, currentUser}) {
 
     const SamplePrevArrow = ({onClick}) => {
         return (
-        <div className="arrow_stories prev_sto" onClick={onClick} style={{cursor:'pointer'}}>
-            <img src="/assets/storyA.png" alt="" style={{transform: 'rotate(180deg)'}} />
+        <div className="arrow_stories prev_sto"  style={{cursor:'pointer'}}>
+            <img src="/assets/storyA.png" alt="" onClick={onClick} style={{transform: 'rotate(180deg)', zIndex: '100'}} />
         </div>
         )
     }
 
     const SampleNextArrow = ({onClick}) => {
         return (
-        <div className="arrow_stories next_sto" ref={storyNextRef} onClick={onClick} style={{cursor:'pointer'}}>
-            <img src="/assets/storyA.png" alt="" />
+        <div className="arrow_stories next_sto"  style={{cursor:'pointer'}}>
+            <img src="/assets/storyA.png" alt="" ref={storyNextRef} onClick={onClick} style={{zIndex: '100'}} />
         </div>
         
         )
@@ -102,7 +102,10 @@ export default function CenterMode ({stories, storyId, currentUser}) {
     useEffect(()=> {
         let change = !loading && setTimeout(async() => {
             let next = currentStory;
-            if(activeStory[idx] !== undefined && next >= [...activeStory[idx]?.media, ...activeStory[idx]?.text].length-1) {
+            if(stories.length === 1){
+                closeRef.current.click();
+            }
+            else if(activeStory[idx] !== undefined && next >= [...activeStory[idx]?.media, ...activeStory[idx]?.text].length-1) {
                 storyNextRef.current.click();
                 next = [...activeStory[idx]?.media, ...activeStory[idx]?.text].length-1;
             }else {
@@ -275,6 +278,12 @@ export default function CenterMode ({stories, storyId, currentUser}) {
                                         <img src="/assets/img1.jpg" width='40px' height='40px' style={{borderRadius: '50%'}} alt="" />
                                         <h2 className='ms-2'>{currentUser.name === story.user.name? 'your story' : story.user.name}</h2>
                                     </div>
+                                    {!loading && <h6 className="text-white">{
+                                    storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.slice(storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.indexOf('T')+1, storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.lastIndexOf(':'))
+                                    }</h6>}
                                     {[...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file && ([...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mp4') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mov') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('ogg') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('qt')) && <div>
                                         <img src="/assets/pause.png" alt="" />
                                         <img className="ms-3" src="/assets/speaker.png" alt="" />
@@ -284,27 +293,34 @@ export default function CenterMode ({stories, storyId, currentUser}) {
                             <div className="main_display">
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text && 
                                     <>
-                                        <p style={{zIndex: id !== idx? '-1' : '1'}}>{storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <p style={{zIndex: id !== idx? '-1' : '1'}}>{storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <p style={{zIndex: id !== idx? '-1' : '1'}}>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>}
                                     </>
                                 }
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file && (storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('png') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('jpg') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('jpeg')) &&
-                                    <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />
+                                    <>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />}
+                                    </>
                                 }
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file && (storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mp4') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mov') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('ogg') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('qt')) &&
-                                    <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />
+                                    <>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />}
+                                    </>
                                 }
 
 
                             </div>
                             <div className="next_inside">
-                                <div className="right" ref={nextRef} onClick={()=>nextStory([...story?.media, ...story?.text])}></div>
-                                <div className="left" onClick={()=>prevStory([...story?.media, ...story?.text])}></div>
+                                <div className="right" ref={nextRef} onClick={()=> !loading && nextStory([...story?.media, ...story?.text])}></div>
+                                <div className="left" onClick={()=> !loading && prevStory([...story?.media, ...story?.text])}></div>
                             </div>
                             <div className={`inactive text-center ${id === idx && 'start_inactive2'}`}>
                                 <div>
                                     <img src="/assets/img1.jpg" width={'70px'} height={'70px'} style={{borderRadius: '50%'}} alt="" />
                                     <h2 className="my-3">{currentUser.name === story.user.name? 'your story' : story.user.name}</h2>
-                                    <h6>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at !== undefined && [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.slice([...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.indexOf('T') + 1, [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.lastIndexOf('.'))}</h6>
+                                    <h6>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at !== undefined && [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.slice([...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.indexOf('T') + 1, [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.lastIndexOf(':'))}</h6>
                                 </div>
                             </div>
                             {loading && <h6 className="text-white position-absolute text-center" style={{zIndex: '1', width: '100%', top: '50%', height: '100%'}}>loading...</h6>}
@@ -350,6 +366,12 @@ export default function CenterMode ({stories, storyId, currentUser}) {
                                         <img src="/assets/img1.jpg" width='40px' height='40px' style={{borderRadius: '50%'}} alt="" />
                                         <h2 className='ms-2'>{currentUser.name === story.user.name? 'your story' : story.user.name}</h2>
                                     </div>
+                                    {!loading && <h6 className="text-white">{
+                                    storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.slice(storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.indexOf('T')+1, storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]
+                                    .created_at.lastIndexOf(':'))
+                                    }</h6>}
                                     {[...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file && ([...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mp4') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mov') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('ogg') || [...story.media, ...story.text].filter(b=> b?.created_at === [...story.media, ...story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('qt')) && <div>
                                         <img src="/assets/pause.png" alt="" />
                                         <img className="ms-3" src="/assets/speaker.png" alt="" />
@@ -359,27 +381,34 @@ export default function CenterMode ({stories, storyId, currentUser}) {
                             <div className="main_display">
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text && 
                                     <>
-                                        <p style={{zIndex: id !== idx? '-1' : '1'}}>{storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <p style={{zIndex: id !== idx? '-1' : '1'}}>{storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <p style={{zIndex: id !== idx? '-1' : '1'}}>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.text}</p>}
                                     </>
                                 }
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file && (storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('png') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('jpg') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('jpeg')) &&
-                                    <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />
+                                    <>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <img style={{objectFit: 'contain', transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file} alt="" />}
+                                    </>
                                 }
                                 {!loading && storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file && (storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mp4') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('mov') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('ogg') || storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file.includes('qt')) &&
-                                    <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />
+                                    <>
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id === story.id && <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />}
+                                        {storyData.filter(b=> b?.created_at === storyData.map(v=> v?.created_at).sort()[currentStory])[0]?.story_id !== story.id && <video style={{objectFit: 'contain',transition: '0.5s', transform: scaleMedia ? 'scale(2)': 'scale(1)'}} src={[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[currentStory])[0]?.file} controls alt="" />}
+                                    </>
                                 }
 
 
                             </div>
                             <div className="next_inside">
-                                <div className="right" ref={nextRef} onClick={()=>nextStory([...story?.media, ...story?.text])}></div>
-                                <div className="left" onClick={()=>prevStory([...story?.media, ...story?.text])}></div>
+                                <div className="right" ref={nextRef} onClick={()=> !loading && nextStory([...story?.media, ...story?.text])}></div>
+                                <div className="left" onClick={()=> !loading && prevStory([...story?.media, ...story?.text])}></div>
                             </div>
                             <div className={`inactive text-center ${id === idx && 'start_inactive2'}`}>
                                 <div>
                                     <img src="/assets/img1.jpg" width={'70px'} height={'70px'} style={{borderRadius: '50%'}} alt="" />
                                     <h2 className="my-3">{currentUser.name === story.user.name? 'your story' : story.user.name}</h2>
-                                    <h6>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at !== undefined && [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.slice([...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.indexOf('T') + 1, [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.lastIndexOf('.'))}</h6>
+                                    <h6>{[...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at !== undefined && [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.slice([...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.indexOf('T') + 1, [...story.media, story.text].filter(b=> b?.created_at === [...story.media, story.text].map(v=> v?.created_at).sort()[[...story.media, story.text].length-2])[0]?.created_at.lastIndexOf(':'))}</h6>
                                 </div>
                             </div>
                             {loading && <h6 className="text-white position-absolute text-center" style={{zIndex: '1', width: '100%', top: '50%', height: '100%'}}>loading...</h6>}

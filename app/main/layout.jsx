@@ -38,25 +38,25 @@ function layout({children}) {
                                         <img src="/assets/add.png" className='ms-2' alt="" />
                                     </button>   
                                 </div>
-                                <div className={`d-flex align-items-center px-4 py-2  ${pathname.includes('friends') && 'active'}`} >
+                                <div className={`d-flex align-items-center px-4 py-2  ${pathname.includes('friends') && 'active'}`} onClick={()=> router.push('/main/friends')}>
                                     <img src="/assets/people2.png" alt="" />
-                                    <h6 className='ms-3'>Friends</h6>
+                                    <h6 className={`ms-3 ${pathname.includes('friends') && 'text-white'}`}>Friends</h6>
                                 </div>
                                 <div className={`d-flex align-items-center px-4 py-2 my-5 ${pathname.includes('videos') && 'active'}`} onClick={()=> router.push('/main/videos')}>
                                     <img src="/assets/media2.png" alt="" />
-                                    <h6 className='ms-3'>Videos</h6>
+                                    <h6 className={`ms-3 ${pathname.includes('videos') && 'text-white'}`}>Videos</h6>
                                 </div>
-                                <div className={`d-flex align-items-center px-4 py-2  ${pathname.includes('settings') && 'active'}`}>
+                                <div className={`d-flex align-items-center px-4 py-2  ${pathname.includes('settings') && 'active'}`} onClick={()=> router.push('/main/settings')}>
                                     <img src="/assets/settings.png" alt="" />
-                                    <h6 className='ms-3'>Settings</h6>
+                                    <h6 className={`ms-3 ${pathname.includes('settings') && 'text-white'}`}>Settings</h6>
                                 </div>
                                 <div className={`d-flex align-items-center px-4 py-2 my-5 ${pathname.includes('shared') && 'active'}`} onClick={()=> router.push('/main/shared')}>
                                     <img src="/assets/shared.png" alt="" />
-                                    <h6 className='ms-3'>Shared</h6>
+                                    <h6 className={`ms-3 ${pathname.includes('shared') && 'text-white'}`}>Shared</h6>
                                 </div>
                                 <div className={`d-flex align-items-center px-4 py-2  ${pathname.includes('saved') && 'active'}`} onClick={()=> router.push('/main/saved')}>
                                     <img src="/assets/saved.png" alt="" />
-                                    <h6 className='ms-3'>Saved</h6>
+                                    <h6 className={`ms-3 ${pathname.includes('saved') && 'text-white'}`}>Saved</h6>
                                 </div>
                             </div>
                         </div>
