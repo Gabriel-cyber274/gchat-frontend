@@ -13,11 +13,11 @@ export default function CenterMode ({stories, storyId, currentUser, closeRef}) {
     const [currentStory, setCurrentStory] = useState(0);
     const [storyData, setStoryData] = useState([]);
     const nextRef = useRef(null);
-    const [stopInt, setStopInt] = useState(false);
+    // const [stopInt, setStopInt] = useState(false);
     const storyNextRef = useRef(null);
     let token = getCookie('token');
     const [loading, setLoading] = useState(false);
-    const [stopMedia, setStopMedia] = useState(false);
+    // const [stopMedia, setStopMedia] = useState(false);
 
 
     const SamplePrevArrow = ({onClick}) => {

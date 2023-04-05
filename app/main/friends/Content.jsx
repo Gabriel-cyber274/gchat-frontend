@@ -4,6 +4,7 @@ import { environment } from '../../../environment/environment'
 import { getCookie } from 'cookies-next';
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import Users from '../../../components/design/users';
 
 
 
@@ -15,6 +16,7 @@ function Content({friends, users, confirm}) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [id, setId] = useState(0);
+    const [mainUsers, setMainUsers] = useState([])
 
     useEffect(()=> {
         let arr1 = confirm.friends.map(friend=> friend.id)
@@ -26,7 +28,18 @@ function Content({friends, users, confirm}) {
               });
         });
         setMainConfirm(mainArr);
-    }, [friends, confirm])
+
+        let arr3 = users.users.map(user=> user.id);
+        const mainArr2 = users.users.filter((elem) => {
+            return arr3.filter(id=> !arr2.includes(id)).some((ele) => {
+            return ele === elem.id;
+              });
+        });
+
+        setMainUsers(mainArr2)
+        console.log(mainArr2)
+    }, [friends, confirm, users])
+
     
     const notify_err = (res) => toast.error(res, { theme: "colored" });
     const notify = (res)=> {
@@ -155,11 +168,19 @@ function Content({friends, users, confirm}) {
                         }      
                     </>
                 }
-
-                
-                
             </div>
         </div>
+        {mainUsers.length > 0 && <div className='user_container my-5 position-relative'>
+            <div className='position-absolute d-flex justify-content-between' style={{top: '0', width: '100%'}}>
+                <img src="/assets/friend_design2.png" className='des1' alt="" />
+                <img src="/assets/friend_design1.png" alt="" />
+            </div>
+            <div className='add_friend_header'>
+                <h2>Discover New Friends</h2>
+            </div>
+            <div className='line'></div>
+            <Users users={mainUsers} addFriend={addFriend} />
+        </div>}
     </div>
   )
 }

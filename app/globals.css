@@ -1223,6 +1223,7 @@ a {
 }
 .friend_list_container {
   overflow: auto;
+  width: 98%;
   height: 550px;
 }
 .friend_list button {
@@ -1240,6 +1241,129 @@ a {
   font-weight: 800;
   letter-spacing: 3px;
 }
-/* .friend_list div {
-  width: 25%;
-} */
+.friend_list_container::-webkit-scrollbar {
+  width: 0.6em;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+ 
+.friend_list_container::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+.friend_list_container::-webkit-scrollbar-thumb {
+  background-color: rgba(58, 58, 58, 0.555);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.user_container {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 20px;
+  height: 382px;
+}
+.user_container .des1 {
+  height: 34px;
+}
+.user_container .line {
+  height: 2px;
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+}
+.add_friend_header {
+  padding: 30px 50px;
+}
+.add_friend_header h2 {
+  font-family: 'Sansation';
+  margin-bottom: 0;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 27px;
+  color: rgba(58, 58, 58, 0.8);
+}
+.add_friend {
+  width: 160px;
+  height: 244px;
+  background: #FFFFFF;
+  border: 0.3px solid rgba(58, 58, 58, 0.35);
+  box-shadow: -15px 30px 13px rgba(0, 0, 0, 0.01), -8px 17px 11px rgba(0, 0, 0, 0.05), -4px 7px 8px rgba(0, 0, 0, 0.06), 0px 0px 0px rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+}
+.add_friend .pic {
+  width: 100%;
+  box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.24);
+  border: 1px solid #BB0A21;
+  height: 145px;
+  border-radius: 10px;
+}
+.add_friend .pic img {
+  width: 95%;
+  height: 95%;
+  object-fit: cover;
+}
+.add_friend h3 {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  margin-bottom: 0;
+  color: rgba(58, 58, 58, 0.8);
+}
+.add_friend button {
+  background: #FFFFFF;
+  border: 0.3px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.09);
+  border-radius: 4px;
+}
+.add_friend button span {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.add_friend button b {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  background: linear-gradient(262.72deg, #BB0A21 -38.87%, #3596BF 97.26%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.users {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.arrow_user {
+  position: absolute;
+  z-index: 1;
+  width: max-content;
+  height: 100%;
+}
+.prev_user {
+  top: 0;
+  display: flex;
+  align-items: center;
+  left: -4%;
+  width: max-content;
+  justify-content: start;
+  z-index: 2 !important;
+}
+.next_user {
+  top: 0;
+  display: flex;
+  align-items: center;
+  right: -4%;
+  width: max-content;
+  justify-content: end;
+}
