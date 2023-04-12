@@ -28,12 +28,16 @@ function Users({users, addFriend}) {
         )
     }
 
+    useEffect(()=> {
+        
+    })
+
     
     const settings = {
         dots: false,
         infinite: users.length > 4 ? true : false,
         speed: 500,
-        slidesToShow: users.length,
+        slidesToShow: users.length > 4? 4 : users.length,
         slidesToScroll: 1,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,

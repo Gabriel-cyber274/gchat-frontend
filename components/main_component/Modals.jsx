@@ -27,7 +27,11 @@ function Modals({setComments, postD, commentId, setCommentId, setSubReply, setSu
     
   
   useEffect(()=> {
-    setCurrentUser(JSON.parse(localStorage.currentUser).user)
+    if((localStorage.currentUser === undefined || localStorage.currentUser === null || token == null || token === undefined)) {
+        router.replace('/auth/login')
+    }else {
+        setCurrentUser(JSON.parse(localStorage.currentUser).user)
+    }
 }, [])
   
   function calendarDate(date) {
@@ -205,7 +209,8 @@ const mediaPost = async(id)=> {
             },
             data: formData,
         });
-        console.log(response.data.success, 'ebuka')
+        // postRef4Close.current.click();
+        // console.log(postRef4Close.current, 'trial')
         router.refresh();
         if(response.data.success) {
             notify(response.data.message)
@@ -251,7 +256,8 @@ const sendComment = async() => {
             if(res.success) {
                 notify(res.message)
                 getComments2(postId)
-                commentScrollRef.current.scrollIntoView({behaviour: 'smooth'});
+                commentScrollRef.current.scrollTop = commentScrollRef.current.scrollHeight;
+                // commentScrollRef.current.scrollIntoView({behaviour: 'smooth'});
             }else {
                 notify_err(res.message)
             }
@@ -282,6 +288,7 @@ const sendComment = async() => {
                 notify(res.message)
                 showSubComment2(res.subcomment.comment_id);
                 getComments2(postId);
+                commentScrollRef.current.scrollTop = commentScrollRef.current.scrollHeight;
                 // commentScrollRef.current.scrollIntoView()
             }else {
                 notify_err(res.message)
@@ -539,7 +546,7 @@ const deleteComment = async(comment)=> {
                     <div style={{cursor: 'pointer', width: '30px', height:'30px'}}  onClick={()=> {postRef4Close.current.click(); postRef3.current.click();}}>
                         <img src="/assets/left.png"  alt="" />
                     </div>
-                    <button onClick={postMedia}>Share</button>
+                    <button data-bs-dismiss="modal" aria-label="Close" onClick={postMedia}>Share</button>
                 </div>
                 <h1 className='text-center crop'>Crop</h1>
                 <div className='d-flex' style={{borderTop: '0.8318px solid rgba(58, 58, 58, 0.22)', marginTop: '2px'}}>
@@ -608,7 +615,7 @@ const deleteComment = async(comment)=> {
                     <h1 className='pt-3'>Comments</h1>
                 </div>
                 <div className='px-3'>  
-                    <div className='main-comment-overflow mb-2'>
+                    <div className='main-comment-overflow mb-2' ref={commentScrollRef}>
                         {postD && comments.length=== 0 && <h1>No Comments</h1>}
                         {postD && comments.length > 0 && comments.map((comment,idx)=> (
                             <div className='d-flex justify-content-between' key={idx}>
@@ -618,7 +625,7 @@ const deleteComment = async(comment)=> {
                                         <div className='ms-3'>
                                             <h2 className='mb-3'>{comment.user.id === currentUser.id ? 'you' : comment.user.name} <span className='ms-3'>{comment.created_at.slice(comment.created_at.indexOf('T')+1, comment.created_at.lastIndexOf(':'))}{comment.created_at.slice(comment.created_at.indexOf('T')+1, comment.created_at.indexOf(':')) > 11 ? 'pm' : 'am'}</span></h2>
                                             <p>{comment.comment}
-                                                <b className='ms-3' style={{cursor: 'pointer',}} onClick={()=> {showSubComment(comment.id); setCommentId(comment.id)}}>{subComment.length > 0 && commentId === comment.id ? 'Close replies' : `Show ${comment.subcomments.length} replies`}</b>
+                                                <b className='ms-3' style={{cursor: 'pointer',}} onClick={()=> {showSubComment(comment.id); setCommentId(comment.id);}}>{subComment.length > 0 && commentId === comment.id ? 'Close replies' : `Show ${comment.subcomments.length} replies`}</b>
                                             </p>
                                         </div>  
                                     </div>
@@ -651,7 +658,6 @@ const deleteComment = async(comment)=> {
                             </div>
                         ))}
                     </div>
-                    <div ref={commentScrollRef}></div>
                 </div>
                 <div className='comment-textMain px-3'>
                     <div className='d-flex align-items-center py-4'  style={{borderTop: '1px solid rgba(58, 58, 58, 0.4)'}}>

@@ -142,7 +142,7 @@ export default function CenterMode ({stories, storyId, currentUser, closeRef}) {
                 }
             }
             
-        }, 3000);
+        }, 6000);
         return ()=> clearTimeout(change);
     }, [currentStory, loading])
 

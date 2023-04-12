@@ -36,7 +36,8 @@ export const environment = {
       share: 'posts/share',
       save: 'posts/save',
       sharedPublic: 'posts/share/public',
-      sharedPrivate: 'posts/share/private'
+      sharedPrivate: 'posts/share/private',
+      allFriendsPost: 'posts/allFriendsPost'
     },
     comments: {
       getComments: 'post-comments/',
@@ -58,6 +59,11 @@ export const environment = {
     },
     user: {
       main: 'users'
+    },
+    notification: {
+      main: 'notification',
+      read: 'notification/single/',
+      readAll: 'notification/markAll'
     }
   };
   
